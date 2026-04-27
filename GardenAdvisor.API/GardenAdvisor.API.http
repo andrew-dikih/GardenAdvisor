@@ -1,0 +1,6 @@
+@GardenAdvisor.API_HostAddress = http://localhost:5010
+
+GET {{GardenAdvisor.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
