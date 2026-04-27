@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Address, Plant, PlantCategory, GardenRequest } from '../types';
 
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5010/api';
 
 const api = axios.create({
   baseURL: API_BASE,

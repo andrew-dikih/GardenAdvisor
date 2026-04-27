@@ -1,0 +1,26 @@
+# .NET build artifacts
+**/bin/
+**/obj/
+*.user
+*.suo
+.vs/
+
+# React build artifacts
+garden-advisor-ui/node_modules/
+garden-advisor-ui/build/
+garden-advisor-ui/.env.local
+garden-advisor-ui/.env.development.local
+garden-advisor-ui/.env.test.local
+garden-advisor-ui/.env.production.local
+garden-advisor-ui/npm-debug.log*
+garden-advisor-ui/yarn-debug.log*
+garden-advisor-ui/yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo

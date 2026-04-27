@@ -1,6 +1,6 @@
 import * as signalR from '@microsoft/signalr';
 
-const HUB_URL = process.env.REACT_APP_HUB_URL || 'http://localhost:5001/hubs/garden';
+const HUB_URL = process.env.REACT_APP_HUB_URL || 'http://localhost:5010/hubs/garden';
 
 let connection: signalR.HubConnection | null = null;
 
