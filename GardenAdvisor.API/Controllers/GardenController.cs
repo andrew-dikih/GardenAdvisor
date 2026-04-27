@@ -33,37 +33,44 @@ public class GardenController : ControllerBase
         if (string.IsNullOrEmpty(request.SessionId))
             request.SessionId = Guid.NewGuid().ToString();
 
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await _hubContext.Clients.Group(request.SessionId)
-                    .SendAsync("ProcessingUpdate", new { status = "started", message = "Starting garden design..." });
-
-                var progress = new Progress<string>(async message =>
-                {
-                    await _hubContext.Clients.Group(request.SessionId)
-                        .SendAsync("ProcessingUpdate", new { status = "processing", message });
-                });
-
-                var result = await _gardenDesignService.DesignGardenAsync(request, progress);
-
-                await _hubContext.Clients.Group(request.SessionId)
-                    .SendAsync("ProcessingComplete", result);
-
-                if (!string.IsNullOrEmpty(request.UserEmail))
-                {
-                    await _emailService.SendScheduleEmailAsync(request.UserEmail, request.UserEmail, result);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error processing garden design for session {SessionId}", request.SessionId);
-                await _hubContext.Clients.Group(request.SessionId)
-                    .SendAsync("ProcessingError", new { message = "An error occurred processing your garden design." });
-            }
-        });
+        // Start background processing and track it (but don't await in response)
+        _ = ProcessGardenDesignAsync(request);
 
         return Accepted(new { sessionId = request.SessionId, message = "Garden design started" });
+    }
+
+    /// <summary>
+    /// Background task for processing garden design with real-time SignalR updates.
+    /// Exceptions are logged but not thrown, as this runs after the HTTP response is sent.
+    /// </summary>
+    private async Task ProcessGardenDesignAsync(GardenRequest request)
+    {
+        try
+        {
+            await _hubContext.Clients.Group(request.SessionId)
+                .SendAsync("ProcessingUpdate", new { status = "started", message = "Starting garden design..." });
+
+            var progress = new Progress<string>(async message =>
+            {
+                await _hubContext.Clients.Group(request.SessionId)
+                    .SendAsync("ProcessingUpdate", new { status = "processing", message });
+            });
+
+            var result = await _gardenDesignService.DesignGardenAsync(request, progress);
+
+            await _hubContext.Clients.Group(request.SessionId)
+                .SendAsync("ProcessingComplete", result);
+
+            if (!string.IsNullOrEmpty(request.UserEmail))
+            {
+                await _emailService.SendScheduleEmailAsync(request.UserEmail, request.UserEmail, result);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error processing garden design for session {SessionId}", request.SessionId);
+            await _hubContext.Clients.Group(request.SessionId)
+                .SendAsync("ProcessingError", new { message = "An error occurred processing your garden design." });
+        }
     }
 }

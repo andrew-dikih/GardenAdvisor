@@ -42,18 +42,7 @@ public class AddressController : ControllerBase
             if (results == null || results.Count == 0)
                 return Ok(new List<Address>());
 
-            var addresses = results.Select(r => new Address
-            {
-                DisplayName = r.display_name ?? string.Empty,
-                Latitude = double.TryParse(r.lat, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var lat) ? lat : 0,
-                Longitude = double.TryParse(r.lon, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var lon) ? lon : 0,
-                Street = r.address?.road ?? string.Empty,
-                City = r.address?.city ?? r.address?.town ?? r.address?.village ?? string.Empty,
-                State = r.address?.state ?? string.Empty,
-                Country = r.address?.country ?? string.Empty,
-                PostalCode = r.address?.postcode ?? string.Empty
-            }).ToList();
-
+            var addresses = results.Select(ParseNominatimResult).ToList();
             return Ok(addresses);
         }
         catch (HttpRequestException ex)
@@ -61,6 +50,39 @@ public class AddressController : ControllerBase
             _logger.LogError(ex, "Failed to contact Nominatim geocoding service");
             return StatusCode(503, "Geocoding service unavailable");
         }
+    }
+
+    /// <summary>
+    /// Parses a Nominatim geocoding result into an Address model.
+    /// </summary>
+    private static Address ParseNominatimResult(NominatimResult result)
+    {
+        var latitude = ParseDouble(result.lat);
+        var longitude = ParseDouble(result.lon);
+        
+        return new Address
+        {
+            DisplayName = result.display_name ?? string.Empty,
+            Latitude = latitude,
+            Longitude = longitude,
+            Street = result.address?.road ?? string.Empty,
+            City = result.address?.city ?? result.address?.town ?? result.address?.village ?? string.Empty,
+            State = result.address?.state ?? string.Empty,
+            Country = result.address?.country ?? string.Empty,
+            PostalCode = result.address?.postcode ?? string.Empty
+        };
+    }
+
+    /// <summary>
+    /// Safely parses a string to double using invariant culture.
+    /// </summary>
+    private static double ParseDouble(string? value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return 0;
+        
+        return double.TryParse(value, System.Globalization.NumberStyles.Float, 
+            System.Globalization.CultureInfo.InvariantCulture, out var result) ? result : 0;
     }
 }
 

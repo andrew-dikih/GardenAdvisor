@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GardenAdvisor.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7aaa4a4dee96317c9a797209724aa3d5dd3a8dd2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5fe7282bc3891f5c1ee1c2cf54758f1c805462dc")]
 [assembly: System.Reflection.AssemblyProductAttribute("GardenAdvisor.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GardenAdvisor.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
