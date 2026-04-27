@@ -12,4 +12,7 @@ public class Plant
     public string SunRequirement { get; set; } = string.Empty;
     public string WaterRequirement { get; set; } = string.Empty;
     public double SpacingMeters { get; set; }
+    public double HeightMeters { get; set; }
+    public List<string> CompanionPlants { get; set; } = new();
+    public List<string> IncompatiblePlants { get; set; } = new();
 }

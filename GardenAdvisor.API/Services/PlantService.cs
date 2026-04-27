@@ -24,7 +24,10 @@ public class PlantService : IPlantService
                 Description = "A warm-season crop producing juicy red fruits. One of the most popular garden vegetables.",
                 GrowingZones = new() { "3","4","5","6","7","8","9","10" },
                 DaysToMaturity = 75, SunRequirement = "Full Sun",
-                WaterRequirement = "Medium", SpacingMeters = 0.6
+                WaterRequirement = "Medium", SpacingMeters = 0.6,
+                HeightMeters = 1.2,
+                CompanionPlants = new() { "basil", "marigold", "carrot" },
+                IncompatiblePlants = new() { "broccoli", "kale" }
             },
             new()
             {
@@ -32,7 +35,10 @@ public class PlantService : IPlantService
                 Description = "A root vegetable that thrives in loose, deep soil. Available in orange, purple, and yellow varieties.",
                 GrowingZones = new() { "3","4","5","6","7","8","9" },
                 DaysToMaturity = 70, SunRequirement = "Full Sun",
-                WaterRequirement = "Medium", SpacingMeters = 0.08
+                WaterRequirement = "Medium", SpacingMeters = 0.08,
+                HeightMeters = 0.3,
+                CompanionPlants = new() { "tomato", "pea", "radish", "lettuce" },
+                IncompatiblePlants = new()
             },
             new()
             {
@@ -40,7 +46,10 @@ public class PlantService : IPlantService
                 Description = "A cool-season leafy green ideal for salads. Grows quickly and can be harvested multiple times.",
                 GrowingZones = new() { "4","5","6","7","8","9" },
                 DaysToMaturity = 45, SunRequirement = "Partial Shade",
-                WaterRequirement = "Medium", SpacingMeters = 0.25
+                WaterRequirement = "Medium", SpacingMeters = 0.25,
+                HeightMeters = 0.3,
+                CompanionPlants = new() { "radish", "spinach", "carrot", "strawberry" },
+                IncompatiblePlants = new() { "sunflower" }
             },
             new()
             {
@@ -48,7 +57,10 @@ public class PlantService : IPlantService
                 Description = "A nutrient-rich leafy green that prefers cool temperatures.",
                 GrowingZones = new() { "3","4","5","6","7","8" },
                 DaysToMaturity = 40, SunRequirement = "Partial Shade",
-                WaterRequirement = "Medium", SpacingMeters = 0.15
+                WaterRequirement = "Medium", SpacingMeters = 0.15,
+                HeightMeters = 0.3,
+                CompanionPlants = new() { "lettuce", "radish", "strawberry" },
+                IncompatiblePlants = new() { "sunflower" }
             },
             new()
             {
@@ -56,7 +68,10 @@ public class PlantService : IPlantService
                 Description = "A warm-season vine producing crisp, refreshing fruits.",
                 GrowingZones = new() { "4","5","6","7","8","9","10" },
                 DaysToMaturity = 60, SunRequirement = "Full Sun",
-                WaterRequirement = "High", SpacingMeters = 0.5
+                WaterRequirement = "High", SpacingMeters = 0.5,
+                HeightMeters = 1.5,
+                CompanionPlants = new() { "radish", "green-bean", "sunflower" },
+                IncompatiblePlants = new()
             },
             new()
             {
@@ -64,7 +79,10 @@ public class PlantService : IPlantService
                 Description = "A sweet, colorful pepper that thrives in warm climates.",
                 GrowingZones = new() { "5","6","7","8","9","10" },
                 DaysToMaturity = 80, SunRequirement = "Full Sun",
-                WaterRequirement = "Medium", SpacingMeters = 0.45
+                WaterRequirement = "Medium", SpacingMeters = 0.45,
+                HeightMeters = 0.6,
+                CompanionPlants = new() { "basil", "marigold", "carrot" },
+                IncompatiblePlants = new()
             },
             new()
             {
@@ -72,7 +90,10 @@ public class PlantService : IPlantService
                 Description = "A prolific summer squash that produces abundantly with minimal care.",
                 GrowingZones = new() { "3","4","5","6","7","8","9","10" },
                 DaysToMaturity = 50, SunRequirement = "Full Sun",
-                WaterRequirement = "Medium", SpacingMeters = 0.9
+                WaterRequirement = "Medium", SpacingMeters = 0.9,
+                HeightMeters = 0.6,
+                CompanionPlants = new() { "pea", "marigold" },
+                IncompatiblePlants = new() { "watermelon", "cantaloupe", "pumpkin" }
             },
             new()
             {
@@ -80,7 +101,10 @@ public class PlantService : IPlantService
                 Description = "Easy-to-grow bush or pole beans producing tender pods.",
                 GrowingZones = new() { "3","4","5","6","7","8","9","10" },
                 DaysToMaturity = 55, SunRequirement = "Full Sun",
-                WaterRequirement = "Medium", SpacingMeters = 0.15
+                WaterRequirement = "Medium", SpacingMeters = 0.15,
+                HeightMeters = 0.5,
+                CompanionPlants = new() { "cucumber", "pea", "carrot", "radish" },
+                IncompatiblePlants = new()
             },
             new()
             {
@@ -88,7 +112,10 @@ public class PlantService : IPlantService
                 Description = "A cool-season climber with sweet pods. Great for spring and fall gardens.",
                 GrowingZones = new() { "3","4","5","6","7","8" },
                 DaysToMaturity = 60, SunRequirement = "Full Sun",
-                WaterRequirement = "Medium", SpacingMeters = 0.1
+                WaterRequirement = "Medium", SpacingMeters = 0.1,
+                HeightMeters = 1.0,
+                CompanionPlants = new() { "carrot", "radish", "green-bean" },
+                IncompatiblePlants = new()
             },
             new()
             {
@@ -96,7 +123,10 @@ public class PlantService : IPlantService
                 Description = "One of the fastest-growing vegetables. Ready in as little as 25 days.",
                 GrowingZones = new() { "2","3","4","5","6","7","8","9" },
                 DaysToMaturity = 28, SunRequirement = "Full Sun",
-                WaterRequirement = "Medium", SpacingMeters = 0.08
+                WaterRequirement = "Medium", SpacingMeters = 0.08,
+                HeightMeters = 0.2,
+                CompanionPlants = new() { "lettuce", "spinach", "cucumber", "carrot", "pea", "green-bean" },
+                IncompatiblePlants = new()
             },
             new()
             {
@@ -104,7 +134,10 @@ public class PlantService : IPlantService
                 Description = "A cold-hardy superfood that can survive light frosts and grows into late autumn.",
                 GrowingZones = new() { "2","3","4","5","6","7","8","9" },
                 DaysToMaturity = 55, SunRequirement = "Full Sun",
-                WaterRequirement = "Medium", SpacingMeters = 0.45
+                WaterRequirement = "Medium", SpacingMeters = 0.45,
+                HeightMeters = 0.6,
+                CompanionPlants = new() { "marigold", "cucumber" },
+                IncompatiblePlants = new() { "tomato" }
             },
             new()
             {
@@ -112,7 +145,10 @@ public class PlantService : IPlantService
                 Description = "A cool-season brassica that produces nutritious heads and side shoots.",
                 GrowingZones = new() { "3","4","5","6","7","8","9" },
                 DaysToMaturity = 80, SunRequirement = "Full Sun",
-                WaterRequirement = "Medium", SpacingMeters = 0.5
+                WaterRequirement = "Medium", SpacingMeters = 0.5,
+                HeightMeters = 0.6,
+                CompanionPlants = new() { "marigold", "cucumber" },
+                IncompatiblePlants = new() { "tomato", "strawberry" }
             },
 
             // Fruits
@@ -122,7 +158,10 @@ public class PlantService : IPlantService
                 Description = "A sweet, low-growing perennial producing bright red berries.",
                 GrowingZones = new() { "3","4","5","6","7","8","9","10" },
                 DaysToMaturity = 90, SunRequirement = "Full Sun",
-                WaterRequirement = "Medium", SpacingMeters = 0.3
+                WaterRequirement = "Medium", SpacingMeters = 0.3,
+                HeightMeters = 0.2,
+                CompanionPlants = new() { "lettuce", "spinach" },
+                IncompatiblePlants = new() { "broccoli" }
             },
             new()
             {
@@ -130,7 +169,10 @@ public class PlantService : IPlantService
                 Description = "A long-lived perennial shrub producing sweet, antioxidant-rich berries.",
                 GrowingZones = new() { "4","5","6","7","8","9" },
                 DaysToMaturity = 365, SunRequirement = "Full Sun",
-                WaterRequirement = "Medium", SpacingMeters = 1.5
+                WaterRequirement = "Medium", SpacingMeters = 1.5,
+                HeightMeters = 1.5,
+                CompanionPlants = new() { "strawberry" },
+                IncompatiblePlants = new()
             },
             new()
             {
@@ -138,7 +180,10 @@ public class PlantService : IPlantService
                 Description = "A thorny cane fruit producing delicate, sweet-tart berries.",
                 GrowingZones = new() { "3","4","5","6","7","8" },
                 DaysToMaturity = 365, SunRequirement = "Full Sun",
-                WaterRequirement = "Medium", SpacingMeters = 0.6
+                WaterRequirement = "Medium", SpacingMeters = 0.6,
+                HeightMeters = 1.5,
+                CompanionPlants = new(),
+                IncompatiblePlants = new()
             },
             new()
             {
@@ -146,7 +191,10 @@ public class PlantService : IPlantService
                 Description = "A sprawling vine producing large, refreshing summer melons.",
                 GrowingZones = new() { "6","7","8","9","10","11" },
                 DaysToMaturity = 90, SunRequirement = "Full Sun",
-                WaterRequirement = "High", SpacingMeters = 1.8
+                WaterRequirement = "High", SpacingMeters = 1.8,
+                HeightMeters = 0.4,
+                CompanionPlants = new(),
+                IncompatiblePlants = new() { "zucchini", "pumpkin", "cantaloupe" }
             },
             new()
             {
@@ -154,7 +202,10 @@ public class PlantService : IPlantService
                 Description = "A sweet, musky melon that loves heat and sun.",
                 GrowingZones = new() { "5","6","7","8","9","10" },
                 DaysToMaturity = 85, SunRequirement = "Full Sun",
-                WaterRequirement = "High", SpacingMeters = 1.5
+                WaterRequirement = "High", SpacingMeters = 1.5,
+                HeightMeters = 0.4,
+                CompanionPlants = new(),
+                IncompatiblePlants = new() { "watermelon", "pumpkin", "zucchini" }
             },
             new()
             {
@@ -162,7 +213,10 @@ public class PlantService : IPlantService
                 Description = "A large vine squash perfect for fall harvest and decoration.",
                 GrowingZones = new() { "3","4","5","6","7","8","9","10" },
                 DaysToMaturity = 100, SunRequirement = "Full Sun",
-                WaterRequirement = "High", SpacingMeters = 1.8
+                WaterRequirement = "High", SpacingMeters = 1.8,
+                HeightMeters = 0.4,
+                CompanionPlants = new() { "pea", "radish" },
+                IncompatiblePlants = new() { "watermelon", "cantaloupe", "zucchini" }
             },
 
             // Flowers & Herbs
@@ -172,7 +226,10 @@ public class PlantService : IPlantService
                 Description = "A tall, cheerful annual that tracks the sun and attracts pollinators.",
                 GrowingZones = new() { "3","4","5","6","7","8","9","10" },
                 DaysToMaturity = 80, SunRequirement = "Full Sun",
-                WaterRequirement = "Low", SpacingMeters = 0.6
+                WaterRequirement = "Low", SpacingMeters = 0.6,
+                HeightMeters = 2.0,
+                CompanionPlants = new() { "cucumber" },
+                IncompatiblePlants = new() { "lettuce", "spinach" }
             },
             new()
             {
@@ -180,7 +237,10 @@ public class PlantService : IPlantService
                 Description = "A vibrant companion plant that deters pests and attracts beneficial insects.",
                 GrowingZones = new() { "2","3","4","5","6","7","8","9","10" },
                 DaysToMaturity = 50, SunRequirement = "Full Sun",
-                WaterRequirement = "Low", SpacingMeters = 0.3
+                WaterRequirement = "Low", SpacingMeters = 0.3,
+                HeightMeters = 0.3,
+                CompanionPlants = new() { "tomato", "basil", "broccoli", "bell-pepper", "zucchini", "kale", "rose" },
+                IncompatiblePlants = new()
             },
             new()
             {
@@ -188,7 +248,10 @@ public class PlantService : IPlantService
                 Description = "A fragrant perennial herb with purple blooms, beloved by pollinators.",
                 GrowingZones = new() { "5","6","7","8","9","10" },
                 DaysToMaturity = 90, SunRequirement = "Full Sun",
-                WaterRequirement = "Low", SpacingMeters = 0.6
+                WaterRequirement = "Low", SpacingMeters = 0.6,
+                HeightMeters = 0.6,
+                CompanionPlants = new() { "rose" },
+                IncompatiblePlants = new()
             },
             new()
             {
@@ -196,7 +259,10 @@ public class PlantService : IPlantService
                 Description = "A heat-loving annual producing vivid flowers that attract butterflies.",
                 GrowingZones = new() { "3","4","5","6","7","8","9","10" },
                 DaysToMaturity = 60, SunRequirement = "Full Sun",
-                WaterRequirement = "Low", SpacingMeters = 0.3
+                WaterRequirement = "Low", SpacingMeters = 0.3,
+                HeightMeters = 0.6,
+                CompanionPlants = new() { "marigold" },
+                IncompatiblePlants = new()
             },
             new()
             {
@@ -204,7 +270,10 @@ public class PlantService : IPlantService
                 Description = "The classic garden flower available in hundreds of varieties and colors.",
                 GrowingZones = new() { "4","5","6","7","8","9" },
                 DaysToMaturity = 60, SunRequirement = "Full Sun",
-                WaterRequirement = "Medium", SpacingMeters = 1.0
+                WaterRequirement = "Medium", SpacingMeters = 1.0,
+                HeightMeters = 1.2,
+                CompanionPlants = new() { "lavender", "marigold" },
+                IncompatiblePlants = new()
             },
             new()
             {
@@ -212,7 +281,10 @@ public class PlantService : IPlantService
                 Description = "A fragrant culinary herb that repels pests and enhances tomato flavor when planted nearby.",
                 GrowingZones = new() { "5","6","7","8","9","10" },
                 DaysToMaturity = 30, SunRequirement = "Full Sun",
-                WaterRequirement = "Medium", SpacingMeters = 0.3
+                WaterRequirement = "Medium", SpacingMeters = 0.3,
+                HeightMeters = 0.5,
+                CompanionPlants = new() { "tomato", "bell-pepper" },
+                IncompatiblePlants = new()
             }
         };
     }
