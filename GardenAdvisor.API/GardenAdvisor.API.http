@@ -1,6 +1,50 @@
 @GardenAdvisor.API_HostAddress = http://localhost:5010
 
-GET {{GardenAdvisor.API_HostAddress}}/weatherforecast/
+GET {{GardenAdvisor.API_HostAddress}}/api/plants/categories
 Accept: application/json
+
+###
+
+GET {{GardenAdvisor.API_HostAddress}}/api/plants/category/vegetables
+Accept: application/json
+
+###
+
+GET {{GardenAdvisor.API_HostAddress}}/api/address/search?query=New+York
+Accept: application/json
+
+###
+
+POST {{GardenAdvisor.API_HostAddress}}/api/garden/design
+Content-Type: application/json
+
+{
+  "sessionId": "test-session-1",
+  "address": {
+    "displayName": "New York, NY",
+    "latitude": 40.7128,
+    "longitude": -74.0060
+  },
+  "gardenArea": {
+    "polygon": [
+      { "lat": 40.7128, "lng": -74.0060 },
+      { "lat": 40.7138, "lng": -74.0060 },
+      { "lat": 40.7138, "lng": -74.0050 },
+      { "lat": 40.7128, "lng": -74.0050 }
+    ],
+    "areaSquareMeters": 100
+  },
+  "selectedPlantIds": ["tomato", "carrot", "basil"]
+}
+
+###
+
+POST {{GardenAdvisor.API_HostAddress}}/api/auth/register-email
+Content-Type: application/json
+
+{
+  "email": "gardener@example.com",
+  "name": "Garden Enthusiast"
+}
 
 ###

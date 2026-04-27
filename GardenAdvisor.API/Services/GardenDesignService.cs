@@ -157,22 +157,20 @@ public class GardenDesignService : IGardenDesignService
         return positions;
     }
 
-    /// <summary>
-    /// Efficiently shuffles a list and takes the first N items using Random.Shared.
-    /// </summary>
     private static List<Plant> ShuffleAndTake(List<Plant> items, int count)
     {
         if (items.Count <= count)
             return new List<Plant>(items);
 
+        // Partial Fisher-Yates: only shuffle the first `count` positions
         var shuffled = new List<Plant>(items);
         var random = Random.Shared;
-        for (int i = shuffled.Count - 1; i > 0; i--)
+        for (int i = 0; i < count; i++)
         {
-            int randomIndex = random.Next(i + 1);
-            (shuffled[i], shuffled[randomIndex]) = (shuffled[randomIndex], shuffled[i]);
+            int j = random.Next(i, shuffled.Count);
+            (shuffled[i], shuffled[j]) = (shuffled[j], shuffled[i]);
         }
 
-        return shuffled.Take(count).ToList();
+        return shuffled.GetRange(0, count);
     }
 }
