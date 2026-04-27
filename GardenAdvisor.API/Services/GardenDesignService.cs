@@ -163,16 +163,16 @@ public class GardenDesignService : IGardenDesignService
     private static List<Plant> ShuffleAndTake(List<Plant> items, int count)
     {
         if (items.Count <= count)
-            return items;
-        
-        // Use Fisher-Yates shuffle for efficiency
+            return new List<Plant>(items);
+
+        var shuffled = new List<Plant>(items);
         var random = Random.Shared;
-        for (int i = items.Count - 1; i > 0; i--)
+        for (int i = shuffled.Count - 1; i > 0; i--)
         {
             int randomIndex = random.Next(i + 1);
-            (items[i], items[randomIndex]) = (items[randomIndex], items[i]);
+            (shuffled[i], shuffled[randomIndex]) = (shuffled[randomIndex], shuffled[i]);
         }
-        
-        return items.Take(count).ToList();
+
+        return shuffled.Take(count).ToList();
     }
 }
