@@ -1,5 +1,6 @@
 using GardenAdvisor.API.Hubs;
 using GardenAdvisor.API.Services;
+using Microsoft.Azure.Cosmos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,15 @@ builder.Services.AddSingleton<IPlantService, PlantService>();
 builder.Services.AddSingleton<IClimateZoneService, ClimateZoneService>();
 builder.Services.AddScoped<IGardenDesignService, GardenDesignService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+
+var cosmosEndpoint = builder.Configuration["CosmosDb:AccountEndpoint"];
+var cosmosKey = builder.Configuration["CosmosDb:AccountKey"];
+if (!string.IsNullOrEmpty(cosmosEndpoint) && !string.IsNullOrEmpty(cosmosKey))
+{
+builder.Services.AddSingleton<CosmosClient>(_ => new CosmosClient(cosmosEndpoint, cosmosKey,
+        new CosmosClientOptions { SerializerOptions = new CosmosSerializationOptions { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase } }));
+    builder.Services.AddScoped<IGardenPlanRepository, CosmosDbGardenPlanRepository>();
+}
 
 var app = builder.Build();
 

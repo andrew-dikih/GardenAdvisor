@@ -13,18 +13,21 @@ public class GardenController : ControllerBase
     private readonly IGardenDesignService _gardenDesignService;
     private readonly IEmailService _emailService;
     private readonly IHubContext<GardenProcessingHub> _hubContext;
+    private readonly IGardenPlanRepository? _gardenPlanRepository;
     private readonly ILogger<GardenController> _logger;
 
     public GardenController(
         IGardenDesignService gardenDesignService,
         IEmailService emailService,
         IHubContext<GardenProcessingHub> hubContext,
-        ILogger<GardenController> logger)
+        ILogger<GardenController> logger,
+        IGardenPlanRepository? gardenPlanRepository = null)
     {
         _gardenDesignService = gardenDesignService;
         _emailService = emailService;
         _hubContext = hubContext;
         _logger = logger;
+        _gardenPlanRepository = gardenPlanRepository;
     }
 
     [HttpPost("design")]
@@ -37,6 +40,29 @@ public class GardenController : ControllerBase
         _ = ProcessGardenDesignAsync(request);
 
         return Accepted(new { sessionId = request.SessionId, message = "Garden design started" });
+    }
+
+    [HttpGet("plans/{sessionId}")]
+    public async Task<IActionResult> GetPlanBySessionId(string sessionId, CancellationToken cancellationToken)
+    {
+        if (_gardenPlanRepository is null)
+            return StatusCode(503, new { message = "Plan storage is not configured." });
+
+        var plan = await _gardenPlanRepository.GetPlanBySessionIdAsync(sessionId, cancellationToken);
+        if (plan is null)
+            return NotFound();
+
+        return Ok(plan);
+    }
+
+    [HttpGet("plans/user/{userId}")]
+    public async Task<IActionResult> GetPlansByUserId(string userId, CancellationToken cancellationToken)
+    {
+        if (_gardenPlanRepository is null)
+            return StatusCode(503, new { message = "Plan storage is not configured." });
+
+        var plans = await _gardenPlanRepository.GetPlansByUserIdAsync(userId, cancellationToken);
+        return Ok(plans);
     }
 
     /// <summary>
@@ -57,6 +83,20 @@ public class GardenController : ControllerBase
             });
 
             var result = await _gardenDesignService.DesignGardenAsync(request, progress);
+
+            if (_gardenPlanRepository is not null)
+            {
+                var plan = new GardenPlan
+                {
+                    Id = result.SessionId,
+                    SessionId = result.SessionId,
+                    UserId = request.UserId,
+                    Request = request,
+                    Result = result,
+                    GeneratedAt = result.GeneratedAt
+                };
+                await _gardenPlanRepository.SavePlanAsync(plan);
+            }
 
             await _hubContext.Clients.Group(request.SessionId)
                 .SendAsync("ProcessingComplete", result);
