@@ -57,12 +57,13 @@ public class GardenDesignService : IGardenDesignService
                 .SelectMany(c => _plantService.GetPlantsByCategory(c))
                 .Select(p => p.Id).ToList());
 
-        var recommendations = allPlants
+        var eligiblePlants = allPlants
             .Where(p => p.GrowingZones.Contains(climateZone.ZoneCode)
                      && !request.SelectedPlantIds.Contains(p.Id))
-            .OrderBy(_ => Guid.NewGuid())
-            .Take(5)
             .ToList();
+
+        // Shuffle and select recommendations
+        var recommendations = ShuffleAndTake(eligiblePlants, 5);
 
         progress.Report("Finalizing your garden design...");
         await Task.Delay(500, cancellationToken);
@@ -154,5 +155,24 @@ public class GardenDesignService : IGardenDesignService
         }
 
         return positions;
+    }
+
+    /// <summary>
+    /// Efficiently shuffles a list and takes the first N items using Random.Shared.
+    /// </summary>
+    private static List<Plant> ShuffleAndTake(List<Plant> items, int count)
+    {
+        if (items.Count <= count)
+            return items;
+        
+        // Use Fisher-Yates shuffle for efficiency
+        var random = Random.Shared;
+        for (int i = items.Count - 1; i > 0; i--)
+        {
+            int randomIndex = random.Next(i + 1);
+            (items[i], items[randomIndex]) = (items[randomIndex], items[i]);
+        }
+        
+        return items.Take(count).ToList();
     }
 }
