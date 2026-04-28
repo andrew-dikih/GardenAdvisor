@@ -49,7 +49,7 @@ jobs:
           push: true
           tags: ${{ env.WEB_IMAGE }}:${{ steps.tag.outputs.tag }},${{ env.WEB_IMAGE }}:latest
           build-args: |
-            REACT_APP_API_URL=https://gardenadvisor-develop-api.thankfulflower-933a10ac.westus3.azurecontainerapps.io
+            REACT_APP_API_URL=${{ vars.AZURE_API_APP_URL }}
 
   deploy:
     name: Deploy to Azure Container Apps
@@ -58,7 +58,7 @@ jobs:
     permissions: {}
     environment:
       name: develop
-      url: https://gardenadvisor-develop-web.thankfulflower-933a10ac.westus3.azurecontainerapps.io
+      url: ${{ vars.AZURE_WEB_APP_URL }}
     steps:
       - name: Login to Azure
         uses: azure/login@v2
@@ -80,7 +80,7 @@ jobs:
             --image ${{ env.API_IMAGE }}:${{ needs.build-and-push.outputs.image-tag }} \
             --set-env-vars \
               ASPNETCORE_URLS=http://+:5000 \
-              Cors__AllowedOrigins=https://gardenadvisor-develop-web.thankfulflower-933a10ac.westus3.azurecontainerapps.io
+              Cors__AllowedOrigins=${{ vars.AZURE_WEB_APP_URL }}
 
       - name: Deploy Web Container App
         run: |
@@ -99,5 +99,5 @@ jobs:
       - name: Verify deployment
         run: |
           echo "Deployment complete."
-          echo "API: https://gardenadvisor-develop-api.thankfulflower-933a10ac.westus3.azurecontainerapps.io"
-          echo "Web: https://gardenadvisor-develop-web.thankfulflower-933a10ac.westus3.azurecontainerapps.io"
+          echo "API: ${{ vars.AZURE_API_APP_URL }}"
+          echo "Web: ${{ vars.AZURE_WEB_APP_URL }}"

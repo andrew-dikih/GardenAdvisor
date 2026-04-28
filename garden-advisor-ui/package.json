@@ -36,6 +36,14 @@
       "react-app/jest"
     ]
   },
+  "jest": {
+    "moduleNameMapper": {
+      "leaflet/dist/leaflet.css": "<rootDir>/src/__mocks__/styleMock.js",
+      "leaflet/dist/images/(.*)": "<rootDir>/src/__mocks__/fileMock.js",
+      "^leaflet$": "<rootDir>/src/__mocks__/leaflet.ts",
+      "^react-leaflet$": "<rootDir>/src/__mocks__/react-leaflet.tsx"
+    }
+  },
   "browserslist": {
     "production": [
       ">0.2%",
