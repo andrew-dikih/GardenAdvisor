@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useLayoutEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, Polygon, CircleMarker, useMapEvents } from 'react-leaflet';
 import { LatLng, Address, GardenArea } from '../types';
@@ -37,7 +37,9 @@ function MapClickHandler({ onMapClick, onMapDblClick, mapRef }: MapClickHandlerP
     },
   });
 
-  mapRef.current = map;
+  useLayoutEffect(() => {
+    mapRef.current = map;
+  }, [map, mapRef]);
 
   return null;
 }
