@@ -87,8 +87,8 @@ export default function AddressPage() {
   const handleMapDblClick = () => {
     if (finalized) return;
     setPolygonPoints(prev => {
-      if (prev.length > 1) {
-        return prev.slice(0, -1);
+      if (prev.length >= 2) {
+        return prev.slice(0, -2);
       }
       return prev;
     });
@@ -187,6 +187,7 @@ export default function AddressPage() {
             <MapContainer
               center={[39, -95]}
               zoom={4}
+              doubleClickZoom={false}
               style={{ height: '100%', width: '100%' }}
             >
               <TileLayer
