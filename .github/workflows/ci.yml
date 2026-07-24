@@ -7,8 +7,46 @@ on:
       - develop
 
 jobs:
+  detect-changes:
+    name: Detect relevant changes
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      api: ${{ steps.filter.outputs.api }}
+      ui: ${{ steps.filter.outputs.ui }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - id: filter
+        name: Classify changed files
+        run: |
+          git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
+          CHANGED="$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD)"
+          echo "Changed files:"
+          echo "$CHANGED"
+
+          api=false
+          ui=false
+          while IFS= read -r path; do
+            case "$path" in
+              GardenAdvisor.API/*|GardenAdvisor.API.sln|GardenAdvisor.sln|Directory.Build.props|Directory.Packages.props|global.json)
+                api=true
+                ;;
+              garden-advisor-ui/*|package.json|package-lock.json)
+                ui=true
+                ;;
+            esac
+          done <<< "$CHANGED"
+
+          echo "api=$api" >> "$GITHUB_OUTPUT"
+          echo "ui=$ui" >> "$GITHUB_OUTPUT"
+
   build-api:
     name: Build API
+    needs: detect-changes
+    if: needs.detect-changes.outputs.api == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -31,6 +69,8 @@ jobs:
 
   build-and-test-ui:
     name: Build and Test UI
+    needs: detect-changes
+    if: needs.detect-changes.outputs.ui == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
