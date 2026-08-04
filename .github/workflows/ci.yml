@@ -3,13 +3,15 @@ name: CI - Build and Test
 # Passive-doc boundary: this repo's ONLY docs-only paths are the two README
 # files below. They are never copied into a deployable build output (verified
 # against GardenAdvisor.API/Dockerfile and garden-advisor-ui/Dockerfile), so a
-# diff touching *only* these paths is safe to skip. paths-ignore fails CLOSED
-# by design: if a pull request touches even one file outside this list (any
-# source, config, workflow, or unlisted markdown), the whole list stops
-# matching and the job runs. See .github/scripts/docs-only-diff.mjs for the
-# equivalent classification logic and its test-covered semantics, and
-# .github/DOCS_ONLY_CI.md for the full contract, including the >=3,000-file
-# GitHub path-filter limitation.
+# diff touching *only* these paths is safe to skip. For diffs under GitHub's
+# 3,000-file path-filter limit, paths-ignore is fail-closed: if a pull
+# request touches even one file outside this list (any source, config,
+# workflow, or unlisted markdown), the whole list stops matching and the job
+# runs. Above that file-count limit, GitHub's own filter evaluation can
+# instead under-trigger (see .github/DOCS_ONLY_CI.md for the exact
+# documented behavior and the required manual response). See
+# .github/scripts/docs-only-diff.mjs for the equivalent classification logic
+# and its test-covered semantics.
 on:
   pull_request:
     branches:
@@ -21,7 +23,7 @@ on:
 
 jobs:
   build-api:
-    name: Build API
+    name: Build and Test
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -43,7 +45,7 @@ jobs:
         run: dotnet build --no-restore --configuration Release
 
   build-and-test-ui:
-    name: Build and Test UI
+    name: Frontend Build
     runs-on: ubuntu-latest
     permissions:
       contents: read

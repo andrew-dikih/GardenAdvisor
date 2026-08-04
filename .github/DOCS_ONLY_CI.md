@@ -54,29 +54,48 @@ non-matching file is enough to make the whole workflow run normally.
 
 ## GitHub's documented path-filter limitation (>=3,000 files)
 
-GitHub's own path-filter evaluation for `push`/`pull_request` triggers has a
-hard limit: if a diff touches 3,000 files or more, GitHub cannot reliably
-evaluate `paths`/`paths-ignore` against the full file list. **When that
-happens, GitHub's documented fallback is to always run the workflow** -- i.e.
-GitHub's own failure mode is "never wrongly skip", not "wrongly skip". This
-repo's automation inherits that same posture and does not attempt to
-override or second-guess it.
+Per GitHub's own docs ([Workflow syntax for GitHub Actions --
+"Git diff comparisons"](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#git-diff-comparisons)),
+`paths`/`paths-ignore` evaluation for `push`/`pull_request` triggers has
+documented limits:
 
-Do not treat this document, or `.github/scripts/docs-only-diff.mjs`, as an
-unqualified guarantee that a docs-only diff will always be detected as such.
-The local `classifyDiff()` helper mirrors GitHub's own fail-closed behavior:
-any diff at or beyond 3,000 changed files, or any diff whose file listing is
-known to be incomplete/truncated, is classified `indeterminate` -- never
-`docs-only`. Treat `indeterminate` the same as `requires-automation` for any
-decision-making purpose.
+- If a push contains more than 1,000 commits, the workflow will **always**
+  run.
+- If generating the diff times out, the workflow will **always** run.
+- **If the generated diff contains more than 3,000 files and the file(s) the
+  workflow filter matches are not in the first 3,000 files returned by the
+  filter, the workflow will NOT run.**
 
-**Operational guidance if a change ever approaches this size:** split the
-oversized change into smaller PRs/pushes before it reaches `main`/`develop`.
-If an oversized diff has already reached `main` (e.g. a large merge or
-history import), treat the release as frozen and manually validate/dispatch
-the affected workflows (`workflow_dispatch` where available, or a manual
-`gh workflow run`) rather than trusting that `paths-ignore` classified it
-correctly.
+The first two cases are safe over-triggers (automation runs when it maybe
+didn't need to). The third is **not** a guaranteed fail-safe: at that scale,
+GitHub's own path-filter evaluation can under-trigger and silently skip a
+workflow that should have run, because it never saw the non-doc file past
+the 3,000-file cutoff. This repo's automation does not claim, and this
+document does not claim anywhere, that `paths-ignore` is unconditionally
+fail-closed once a diff crosses that size -- it is fail-closed only below the
+limit.
+
+`.github/scripts/docs-only-diff.mjs`'s `classifyDiff()` reflects this
+directly: any diff at or beyond 3,000 changed files, or any diff whose file
+listing is known to be incomplete/truncated, is classified `indeterminate`
+-- **never** `docs-only`, and never asserted as a confident
+`requires-automation` either, since the classifier cannot see enough of the
+diff to know. Treat `indeterminate` as **non-success** for any
+decision-making purpose (i.e. do not proceed as if the diff were verified
+docs-only, and do not assume GitHub's trigger behaved correctly).
+
+**Operational guidance if a change ever approaches or exceeds this size:**
+
+- **Prefer splitting** the oversized change into smaller PRs/pushes before it
+  reaches `main`/`develop`, so no single diff ever nears the 3,000-file
+  threshold.
+- If an oversized diff has already reached `main` (e.g. a large merge or
+  history import), **treat the release as frozen**: do not assume CI/CD ran
+  (or was correctly skipped) based on `paths-ignore` alone. Compute the full
+  local diff (`git diff --name-only <base>...<head>` with no truncation) to
+  classify it yourself, and **manually validate and/or manually dispatch**
+  the affected workflows (`workflow_dispatch` where available, or
+  `gh workflow run`) rather than trusting the automatic trigger result.
 
 ## Branch-protection caveat (read before relying on this for merges)
 
@@ -90,18 +109,26 @@ diffs), its job(s) never report a status at all, and any branch-protection
 indefinitely (this repo also has `enforce_admins: true` on both protected
 branches, meaning even a repo admin cannot bypass this via the merge button).
 
-At the time this gating was added, `main`'s required contexts are
-`Build and Test`, `Frontend Build`, and `Check for release label`; `develop`'s
-are `Build and Test` and `Frontend Build`. **These do not match this
-repository's actual job names** (`Build API` and `Build and Test UI` in
-`ci.yml`, `Check for release label` in `label-check.yml` -- the last one does
-match). This mismatch predates this change and already means required
-checks were not reliably satisfied before docs-only gating existed; adding
-`paths-ignore` does not newly break anything that was working, but it does
-mean a genuine docs-only PR will likely be unmergeable through the normal PR
-UI until an administrator either updates the required-context names to match
-reality, or reconfigures which checks are required for doc-only paths, or a
-non-doc commit is pushed to make the real jobs run at least once. This gating
+`main`'s required contexts are `Build and Test`, `Frontend Build`, and
+`Check for release label`; `develop`'s are `Build and Test` and
+`Frontend Build`. As of this change, the `ci.yml` job `name:` fields were
+renamed to match exactly (`build-api` -> `Build and Test`,
+`build-and-test-ui` -> `Frontend Build`), fixing a pre-existing mismatch
+(previously `Build API` / `Build and Test UI`) without changing what branch
+protection enforces. `label-check.yml`'s job was already named
+`Check for release label`, matching `main`'s third required context.
+
+This does **not** eliminate the underlying caveat: a genuine docs-only PR
+still causes these jobs to be skipped (by design, to cost zero runner
+minutes), so their required contexts still won't report for that PR, and it
+will still show "Expected — waiting for status to be reported" and be
+blocked from merging through the normal PR UI. Fixing the name mismatch only
+ensures that on any PR where these jobs *do* run, they satisfy the exact
+required-context names branch protection expects. Whether/how to let
+docs-only PRs merge despite required-but-skipped checks (e.g. reconfiguring
+which contexts are required, or accepting that docs-only PRs must be merged
+via a path that tolerates pending checks) is a branch-protection policy
+decision explicitly left to the repository administrator/coordinator; this
 change intentionally does **not** modify branch protection, rulesets, or
 required-check configuration -- that requires an admin-scoped token
 (`GH_SETUP_TOKEN`, see `setup-repository.yml`) and is out of scope here.

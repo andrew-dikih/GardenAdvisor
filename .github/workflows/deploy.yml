@@ -4,7 +4,8 @@ name: CD - Deploy to Azure
 # and .github/DOCS_ONLY_CI.md). A push to develop whose ONLY changed files are
 # these two READMEs never builds/pushes images or deploys. Any other file
 # (including a new markdown path not yet on this allowlist) makes the whole
-# push not match paths-ignore, so the deploy runs -- fail closed.
+# push not match paths-ignore, so the deploy runs -- fail closed, except above
+# GitHub's documented 3,000-file path-filter limit (see DOCS_ONLY_CI.md).
 on:
   push:
     branches:

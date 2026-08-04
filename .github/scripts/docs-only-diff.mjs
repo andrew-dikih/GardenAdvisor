@@ -44,11 +44,21 @@ export const GITHUB_PATH_FILTER_FILE_LIMIT = 3000;
  * Classification rules (in order):
  *   1. Unknown/empty/truncated input, or a file count at or beyond GitHub's
  *      documented 3,000-file path-filter evaluation limit, is INDETERMINATE.
- *      GitHub's own paths/paths-ignore evaluation has the same limit and, per
- *      GitHub's docs, falls back to always running the workflow beyond it --
- *      i.e. GitHub fails to "run automation", never to "wrongly skip it". Our
- *      local classification mirrors that same fail-closed posture: we never
- *      assert docs-only when we can't see the whole diff.
+ *      Per GitHub's own docs (Workflow syntax for GitHub Actions ->
+ *      "Git diff comparisons"): if a push has more than 1,000 commits, or
+ *      diff generation times out, the workflow will ALWAYS run (safe,
+ *      over-triggers). But if the generated diff contains more than 3,000
+ *      files and the file(s) the filter would match are NOT among the first
+ *      3,000 returned, the workflow will NOT run -- i.e. GitHub's own
+ *      mechanism can silently under-trigger (falsely skip) in that specific
+ *      case, it is not a guaranteed fail-safe. We do not claim
+ *      paths-ignore is unconditionally fail-closed at this scale: our local
+ *      classifier instead refuses to guess and reports INDETERMINATE
+ *      whenever it cannot see (or trust) the complete file list, so callers
+ *      can apply the operational response in DOCS_ONLY_CI.md (split the
+ *      change, freeze + do a full local diff, or manually
+ *      validate/dispatch the affected workflow) instead of assuming either
+ *      "ran" or "skipped" was correct.
  *   2. If every changed file is in ALLOWLIST, it's DOCS-ONLY.
  *   3. Otherwise, REQUIRES-AUTOMATION (this includes any mix of docs +
  *      non-docs changes -- there is no partial-credit "mostly docs" case).
