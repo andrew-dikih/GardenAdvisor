@@ -1,10 +1,23 @@
 name: CI - Build and Test
 
+# Passive-doc boundary: this repo's ONLY docs-only paths are the two README
+# files below. They are never copied into a deployable build output (verified
+# against GardenAdvisor.API/Dockerfile and garden-advisor-ui/Dockerfile), so a
+# diff touching *only* these paths is safe to skip. paths-ignore fails CLOSED
+# by design: if a pull request touches even one file outside this list (any
+# source, config, workflow, or unlisted markdown), the whole list stops
+# matching and the job runs. See .github/scripts/docs-only-diff.mjs for the
+# equivalent classification logic and its test-covered semantics, and
+# .github/DOCS_ONLY_CI.md for the full contract, including the >=3,000-file
+# GitHub path-filter limitation.
 on:
   pull_request:
     branches:
       - main
       - develop
+    paths-ignore:
+      - 'README.md'
+      - 'garden-advisor-ui/README.md'
 
 jobs:
   build-api:
@@ -14,10 +27,10 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '10.0.x'
 
@@ -34,12 +47,12 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
           cache-dependency-path: garden-advisor-ui/package-lock.json
 
