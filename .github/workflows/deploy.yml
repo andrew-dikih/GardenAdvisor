@@ -1,9 +1,18 @@
 name: CD - Deploy to Azure
 
+# Passive-doc boundary: identical allowlist to ci.yml (see that file's header
+# and .github/DOCS_ONLY_CI.md). A push to develop whose ONLY changed files are
+# these two READMEs never builds/pushes images or deploys. Any other file
+# (including a new markdown path not yet on this allowlist) makes the whole
+# push not match paths-ignore, so the deploy runs -- fail closed, except above
+# GitHub's documented 3,000-file path-filter limit (see DOCS_ONLY_CI.md).
 on:
   push:
     branches:
       - develop
+    paths-ignore:
+      - 'README.md'
+      - 'garden-advisor-ui/README.md'
 
 env:
   REGISTRY: ${{ vars.AZURE_REGISTRY_URL }}
@@ -20,21 +29,21 @@ jobs:
       image-tag: ${{ steps.tag.outputs.tag }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set image tag
         id: tag
         run: echo "tag=${{ github.sha }}" >> "$GITHUB_OUTPUT"
 
       - name: Log in to Azure Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ vars.AZURE_REGISTRY_USERNAME }}
           password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
 
       - name: Build and push API image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: GardenAdvisor.API/Dockerfile
@@ -42,7 +51,7 @@ jobs:
           tags: ${{ env.API_IMAGE }}:${{ steps.tag.outputs.tag }},${{ env.API_IMAGE }}:latest
 
       - name: Build and push Web image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: garden-advisor-ui
           file: garden-advisor-ui/Dockerfile
@@ -59,7 +68,7 @@ jobs:
       url: ${{ vars.AZURE_WEB_APP_URL }}
     steps:
       - name: Login to Azure
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 

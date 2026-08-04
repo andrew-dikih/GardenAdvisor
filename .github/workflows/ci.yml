@@ -1,45 +1,62 @@
 name: CI - Build and Test
 
+# Passive-doc boundary: this repo's ONLY docs-only paths are the two README
+# files below. They are never copied into a deployable build output (verified
+# against GardenAdvisor.API/Dockerfile and garden-advisor-ui/Dockerfile), so a
+# diff touching *only* these paths is safe to skip. For diffs under GitHub's
+# 3,000-file path-filter limit, paths-ignore is fail-closed: if a pull
+# request touches even one file outside this list (any source, config,
+# workflow, or unlisted markdown), the whole list stops matching and the job
+# runs. Above that file-count limit, GitHub's own filter evaluation can
+# instead under-trigger (see .github/DOCS_ONLY_CI.md for the exact
+# documented behavior and the required manual response). See
+# .github/scripts/docs-only-diff.mjs for the equivalent classification logic
+# and its test-covered semantics.
 on:
   pull_request:
     branches:
       - main
       - develop
+    paths-ignore:
+      - 'README.md'
+      - 'garden-advisor-ui/README.md'
 
 jobs:
   build-api:
-    name: Build API
+    name: Build and Test
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '10.0.x'
 
       - name: Restore dependencies
+        working-directory: GardenAdvisor.API
         run: dotnet restore
 
       - name: Build
+        working-directory: GardenAdvisor.API
         run: dotnet build --no-restore --configuration Release
 
   build-and-test-ui:
-    name: Build and Test UI
+    name: Frontend Build
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
           cache-dependency-path: garden-advisor-ui/package-lock.json
 
